@@ -1,0 +1,373 @@
+﻿@{ Layout = null;}
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title></title>
+
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    <link href="~/Content/Chat.css?t=@DateTime.Now.Ticks" rel="stylesheet" />
+    <script src="~/Scripts/jquery-3.0.0.min.js"></script>
+    <script src="~/Scripts/jquery.signalR-2.4.1.min.js"></script>
+    <script src="~/Scripts/knockout-3.4.2.js"></script>
+    <script src="~/Scripts/modernizr-2.6.2.js"></script>
+    <script src="~/Content/avata.js"></script>
+    <script src="~/Scripts/date.js"></script>
+    <script src="~/Scripts/Playsound.js"></script>
+    <script src="~/Scripts/umd/popper.min.js"></script>
+    <script src="~/Scripts/bootstrap.js"></script>
+    <script src="~/Scripts/toastr/jquery.toast.min.js"></script>
+    <link href="~/Scripts/toastr/jquery.toast.min.css" rel="stylesheet" />
+    <script src="~/Scripts/Chat.js?t=@DateTime.Now.Ticks"></script>
+    <script src="~/Scripts/toastr/toasthelper.js"></script>
+    <script src="~/Scripts/MyScript.js"></script>
+    <script src="~/signalr/hubs"></script>
+    <link href="~/Content/avatarcss.css" rel="stylesheet" />
+    <link href="~/Scripts/select2/select2.min.css" rel="stylesheet" />
+    <script src="~/Scripts/select2/select2.min.js"></script>
+    <link href="~/Content/icons.css" rel="stylesheet" />
+    <style>
+        .hidden {
+            display:none;
+        }
+       
+    </style>
+
+</head>
+<body>
+    <div class="header">
+        <div class="team-menu">
+            <img class="user-menu_profile-pic" width="48" height="48" src="~/Content/icons/avatar_2x.png" alt="Profile" data-bind="attr: {src: myAvatar()}" />
+            <a href="#" class="user-menu_username" data-toggle="modal" data-target="#setstatus-modal">
+                <span data-bind="css: myStatusCss()"></span><span data-bind="text: myName()"></span>
+                <span class="connection_status" data-bind="text: myStatus()"></span>
+            </a>
+
+        </div>
+        <div class="channel-menu">
+            <span class="channel-menu_name">
+                <span class="channel-menu_prefix">#</span>
+                <span id="joinedRoom">Lobby</span>
+            </span>
+            <span class="float-right hidden" style="margin:10px !important" id="spactions">
+                <a href="#" data-toggle="modal" id="members" role="button" class="btn btn-info hidden" data-target="#groupmember-modal">
+                    <span id="membercount"></span><i class="mdi mdi-account mdi-18px"></i> Members</a>
+                <a href="#" data-toggle="modal" id="addmember" role="button" class="btn btn-success hidden" data-target="#addMember-room-modal"><i class="mdi mdi-plus-circle mdi-18px"></i> Invite People</a>
+                <a href="#" data-toggle="modal" role="button" class="btn btn-danger" data-target="#delete-room-modal"><i class="mdi mdi-delete mdi-18px"></i> Delete Room</a>
+            </span>
+        </div>
+    </div>
+    <div class="main">
+        <div class="listings">
+            <div class="listings_channels">
+                <h2 class="listings_header">Rooms &nbsp;&nbsp;&nbsp;<a href="#" id="create-room" data-toggle="modal" data-target="#create-room-modal"><span class="mdi mdi-plus-circle mdi-18px" title="Create new room"></span> </a></h2>
+                <ul class="channel_list" id="room-list" data-bind="foreach: chatRooms">
+                    <li class="channel" data-bind="attr:{id:'li_'+$data.roomId()}">
+                        <a class="channel_name" onclick="loadRoom(this);" data-bind="attr: { id: $data.roomId, cname: $data.name }">
+                            <span>
+                                <span class="prefix" data-bind="if: $data.isPublic">#</span>
+                                <span class="prefix" data-bind="if: $data.isPrivate"><i class="mdi mdi-lock mdi-18px"></i></span>
+                                <span data-bind="text: $data.name"></span>
+                            </span>
+                       </a>
+                    </li>
+                </ul>
+
+            </div>
+            <div class="listings_direct-messages">
+                <h2 class="listings_header">Direct Messages</h2>
+                <ul class="channel_list" id="companylist" data-bind='template: { name: "companytemplate" ,afterRender: unReadMessage,foreach: chatCompanies }'></ul>
+                <script type="text/html" id="companytemplate">
+                    <li>
+                        <a class="channel" onclick="ShowUsers(this);" data-bind="attr: { compId:$data.companyId }"><span data-bind="text: $data.companyName()+' ('+$data.onlineEmployeeCount()+')'"></span><span data-bind="attr: { id: $data.companyId()+'_unread'}"></span></a>
+                        <div data-bind="attr: { id:'comp_'+$data.companyId() }" style="display:none">
+                            <ul id="users-list" class="channel_list" data-bind="foreach: employees()">
+                                <li class="channel" data-toggle="tooltip" data-placement="top" data-bind="attr:{id:'li_'+$data.userName(),title:$data.status}">
+                                    <span data-bind="css: $data.statuscss, attr: { id:$data.userName()+'_status' }"></span>
+                                    <a class="channel_name" onclick="loadUser(this);" data-bind="attr: { id: $data.userName,comp:$data.companyName,uname:$data.displayName,compid:$data.companyId()+'_unread',isme:$data.isMe }">
+                                        <span data-bind="text: $data.displayName"></span>
+                                        <span class="connection_status" data-bind="if: $data.isMe">(You)</span>
+                                        <span data-bind="attr: { id: $data.userName()+'_unread',compId:$data.companyId()+'_unread'}"></span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                </script>
+            </div>
+        </div>
+        <div class="message-history" data-bind="foreach: chatDates">
+            <div data-bind="html:$data" class="text-center font-weight-bold" style="width:100%"></div>
+            <div data-bind="foreach: $root.chatMessages.index.date()[$data]">
+                <div class="message">
+                    <span class="person-avatarPlaceholder" data-bind="css: $data.avatarCss,text:$data.initials"></span>
+                    <a class="message_username" href="#" data-bind="text:$data.from"></a>
+                    <span class="message_timestamp" data-bind="text:$data.timestamp"></span>
+                    <span class="message_star"></span>
+                    <span class="message_content" data-bind="html:$data.content"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="footer">
+        <div class="user-menu">&nbsp;</div>
+        <div class="input-box inner-addon right-addon">
+            <div class="emoticon-container hidden" id="emojis-container">
+                <a href="#">
+                    <input type="hidden" value=":)" />
+                    <img src="~/Content/emojis/emoji1.png" />
+                </a>
+                <a href="#">
+                    <input type="hidden" value=":P" />
+                    <img src="~/Content/emojis/emoji2.png" />
+                </a>
+                <a href="#">
+                    <input type="hidden" value=":O" />
+                    <img src="~/Content/emojis/emoji3.png" />
+                </a>
+                <a href="#">
+                    <input type="hidden" value=":-)" />
+                    <img src="~/Content/emojis/emoji4.png" />
+                </a>
+                <a href="#">
+                    <input type="hidden" value="B|" />
+                    <img src="~/Content/emojis/emoji5.png" />
+                </a>
+                <a href="#">
+                    <input type="hidden" value=":D" />
+                    <img src="~/Content/emojis/emoji6.png" />
+                </a>
+                <a href="#">
+                    <input type="hidden" value="<3" />
+                    <img src="~/Content/emojis/emoji7.png" />
+                </a>
+            </div>
+            <a id="emojibtn" href="#" class="glyphicon"><img src="~/Content/icons/smile1.png" /></a>
+            <input id="chat-message" class="input-box_text" autocomplete="off" type="text" value="" data-bind="value:message, valueUpdate: 'afterkeydown', event: { keypress: onEnter }" placeholder="What's on your mind?" />
+            
+
+        </div>
+    </div>
+
+    <!-- CREATE ROOM MODAL -->
+    <div class="modal" id="create-room-modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title text-left font-weight-bold">Create Room</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <div class="col-sm-12">
+                            <input type="text" class="form-control" id="roomName" placeholder="Room name">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-12">
+                            <input type="checkbox" id="chkPrivate">
+                            <label for="chkPrivate">Private </label>
+                        </div>
+                    </div>
+                    
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-success" data-dismiss="modal" data-bind="click: createRoom">Create</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal" id="addMember-room-modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title text-left font-weight-bold">Invite People</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <select class="form-control select2" multiple id="users" data-bind='template: { name: "companydropdown" ,foreach: chatCompanies }'>
+                    </select>
+                    <script type="text/html" id="companydropdown">
+                        <optgroup data-bind="attr:{label:$data.companyName()}, foreach: employees()">
+                            <option data-bind="value: $data.userName,text:$data.displayName"></option>
+                        </optgroup>                        
+                    </script>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-success" data-dismiss="modal" data-bind="click: inviteUsers">Invite</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="groupmember-modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title text-left font-weight-bold" id="roomtitle"></h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <table class="table flex-nowrap">
+                        <thead>
+                            <tr>
+                                <th>
+                                    Member Name
+                                </th>
+                                <th>
+                                    <center>
+                                        Action
+                                    </center>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody data-bind='foreach: groupMembers'>
+                            <tr>
+                                <td data-bind="html:$data.displayName"></td>
+                                <td>
+                                    <center>
+                                        <button type="button" class="btn btn-danger" data-dismiss="modal" onclick="deleteMember(this);" data-bind="attr: { id: $data.userName }">Delete</button>
+                                    </center>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <script type="text/html" id="groupMembers">
+                        
+                    </script>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="delete-room-modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title text-left font-weight-bold">Delete Room</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    
+                </div>
+                <div class="modal-body">
+                    <label>Are you sure? You want to remove this room.</label>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal" data-bind="click: deleteRoom">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="setstatus-modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title text-left font-weight-bold">Set Status</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <input type="text" class="form-control" id="customstatus" data-bind="value:$data.myStatus" placeholder="Status">
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-md-4">
+                            <a style="cursor:pointer" onclick="fillStatus(this)" status="Online"><span class="online"></span> <span class="connection_status">Online</span></a>
+                        </div>
+                        <div class="col-md-4">
+                            <a style="cursor:pointer" onclick="fillStatus(this)" status="Offline"><span class="offline"></span> <span class="connection_status">Offline</span></a>
+                        </div>
+                        <div class="col-md-4">
+                            <a style="cursor:pointer" onclick="fillStatus(this)" status="Away"><span class="away"></span> <span class="connection_status">Away</span></a>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-md-4">
+                            <a style="cursor:pointer" onclick="fillStatus(this)" status="In a meeting"><span class="offline"></span> <span class="connection_status">In a meeting</span></a>
+                        </div>
+                        <div class="col-md-4">
+                            <a style="cursor:pointer" onclick="fillStatus(this)" status="Commuting"><span class="offline"></span> <span class="connection_status">Commuting</span></a>
+                        </div>
+                        <div class="col-md-4">
+                            <a style="cursor:pointer" onclick="fillStatus(this)" status="Out Sick"><span class="offline"></span> <span class="connection_status">Out Sick</span></a>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-md-4">
+                            <a style="cursor:pointer" onclick="fillStatus(this)" status="Vacationing"><span class="offline"></span> <span class="connection_status">Vacationing</span></a>
+                        </div>
+                        <div class="col-md-4">
+                            <a style="cursor:pointer" onclick="fillStatus(this)" status="Working remotely"><span class="offline"></span> <span class="connection_status">Working remotely</span></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" data-bind="click: changeStatus">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- REMOVE ROOM MODAL -->
+    <div class="modal" id="remove-room-modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">Delete Room</h4>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete this Room?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" data-bind="click: deleteRoom">Yes</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script type="text/javascript">
+        function ShowUsers(obj) {
+
+            $("#comp_" + $(obj).attr("compId")).toggle();
+        }
+
+        function fillStatus(obj) {
+
+            $('#customstatus').val($(obj).attr("status"));
+        }
+    </script>
+
+    <script type="text/javascript">
+
+        
+        function Shownotification(message)
+        {
+            window.parent.postMessage(message, 'https://titleconnectgroup.com');
+        }
+
+        $('.select2').select2({
+            selectOnClose: false
+        });
+
+        $('.select2').css("width", "100%");
+
+    </script>
+    
+</body>
+</html>

@@ -1,0 +1,81 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="TitleConnectGroupModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityType Name="Company">
+    <Key>
+      <PropertyRef Name="CompanyId" />
+    </Key>
+    <Property Name="CompanyId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="CompanyName" Type="nvarchar" MaxLength="250" />
+    <Property Name="CompanyFullName" Type="nvarchar(max)" />
+    <Property Name="WebURL" Type="nvarchar(max)" />
+    <Property Name="Abbriviation" Type="nvarchar" MaxLength="50" />
+    <Property Name="CompanyCode" Type="nvarchar" MaxLength="50" />
+    <Property Name="CompanyLogo" Type="nvarchar" MaxLength="256" />
+    <Property Name="SmallCompanyLogo" Type="nvarchar" MaxLength="256" />
+    <Property Name="ColorCode" Type="nvarchar" MaxLength="50" />
+    <Property Name="TextColorCode" Type="nvarchar" MaxLength="50" />
+    <Property Name="CreatedBy" Type="int" />
+    <Property Name="CreatedDate" Type="datetime" />
+    <Property Name="EditedBy" Type="int" />
+    <Property Name="EditedDate" Type="datetime" />
+    <Property Name="DeletedBy" Type="int" />
+    <Property Name="DeletedDate" Type="datetime" />
+    <Property Name="isDeleted" Type="bit" />
+    <Property Name="isActive" Type="bit" />
+  </EntityType>
+  <EntityType Name="Users">
+    <Key>
+      <PropertyRef Name="UserId" />
+    </Key>
+    <Property Name="UserId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="FirstName" Type="nvarchar" MaxLength="50" />
+    <Property Name="LastName" Type="nvarchar" MaxLength="50" />
+    <Property Name="InitialName" Type="nvarchar" MaxLength="50" />
+    <Property Name="CompanyEmail" Type="nvarchar" MaxLength="100" />
+    <Property Name="EmailId" Type="nvarchar" MaxLength="100" />
+    <Property Name="Passwd" Type="nvarchar(max)" />
+    <Property Name="UserType" Type="int" />
+    <Property Name="BirthDate" Type="date" />
+    <Property Name="ShowBirthDayAnnouncement" Type="bit" />
+    <Property Name="PositionId" Type="int" />
+    <Property Name="RoleId" Type="int" />
+    <Property Name="CompanyId" Type="int" />
+    <Property Name="LocationId" Type="nvarchar" MaxLength="100" />
+    <Property Name="GroupId" Type="nvarchar" MaxLength="100" />
+    <Property Name="HireDate" Type="date" />
+    <Property Name="Extension" Type="nvarchar" MaxLength="50" />
+    <Property Name="DirectDial" Type="nvarchar" MaxLength="50" />
+    <Property Name="Mobile" Type="nvarchar" MaxLength="15" />
+    <Property Name="SecrateContactNumber" Type="nvarchar" MaxLength="15" />
+    <Property Name="ProfilePicture" Type="nvarchar" MaxLength="256" />
+    <Property Name="EContactName" Type="nvarchar" MaxLength="100" />
+    <Property Name="ERelationship" Type="nvarchar" MaxLength="50" />
+    <Property Name="EPhone" Type="nvarchar" MaxLength="15" />
+    <Property Name="EEmail" Type="nvarchar" MaxLength="100" />
+    <Property Name="AuthyId" Type="nvarchar" MaxLength="50" />
+    <Property Name="UserToken" Type="nvarchar" MaxLength="50" />
+    <Property Name="UserActiveStatus" Type="nvarchar" MaxLength="50" />
+    <Property Name="isCloser" Type="bit" />
+    <Property Name="isGhostUser" Type="bit" />
+    <Property Name="CreatedBy" Type="int" />
+    <Property Name="CreatedDate" Type="datetime" />
+    <Property Name="EditedBy" Type="int" />
+    <Property Name="EditedDate" Type="datetime" />
+    <Property Name="DeletedBy" Type="int" />
+    <Property Name="DeletedDate" Type="datetime" />
+    <Property Name="isDeleted" Type="bit" />
+    <Property Name="isDeleteLock" Type="bit" />
+    <Property Name="isActive" Type="bit" />
+    <Property Name="isProfileCompleted" Type="bit" />
+    <Property Name="isApproved" Type="bit" />
+    <Property Name="ApprovedDate" Type="datetime" />
+    <Property Name="ApprovedBy" Type="int" />
+    <Property Name="isRejected" Type="bit" />
+    <Property Name="RejectedDate" Type="datetime" />
+    <Property Name="RejectedBy" Type="int" />
+  </EntityType>
+  <EntityContainer Name="TitleConnectGroupModelStoreContainer">
+    <EntitySet Name="Company" EntityType="Self.Company" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Users" EntityType="Self.Users" Schema="dbo" store:Type="Tables" />
+  </EntityContainer>
+</Schema>

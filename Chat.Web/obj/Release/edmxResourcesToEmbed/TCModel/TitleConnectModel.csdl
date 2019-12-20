@@ -1,0 +1,68 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="TitleConnectGroupModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="Company">
+    <Key>
+      <PropertyRef Name="CompanyId" />
+    </Key>
+    <Property Name="CompanyId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="CompanyName" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+    <Property Name="CompanyFullName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="isDeleted" Type="Boolean" />
+    <Property Name="isActive" Type="Boolean" />
+  </EntityType>
+  <EntityContainer Name="TitleConnectGroupEntities" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="Companies" EntityType="Self.Company" />
+    <EntitySet Name="Users" EntityType="TitleConnectGroupModel.User" />
+  </EntityContainer>
+  <EntityType Name="User">
+    <Key>
+      <PropertyRef Name="UserId" />
+    </Key>
+    <Property Name="UserId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="FirstName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="LastName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="InitialName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="CompanyEmail" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="EmailId" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="Passwd" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="UserType" Type="Int32" />
+    <Property Name="BirthDate" Type="DateTime" Precision="0" />
+    <Property Name="ShowBirthDayAnnouncement" Type="Boolean" />
+    <Property Name="PositionId" Type="Int32" />
+    <Property Name="RoleId" Type="Int32" />
+    <Property Name="CompanyId" Type="Int32" />
+    <Property Name="LocationId" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="GroupId" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="HireDate" Type="DateTime" Precision="0" />
+    <Property Name="Extension" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="DirectDial" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="Mobile" Type="String" MaxLength="15" FixedLength="false" Unicode="true" />
+    <Property Name="SecrateContactNumber" Type="String" MaxLength="15" FixedLength="false" Unicode="true" />
+    <Property Name="ProfilePicture" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="EContactName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="ERelationship" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="EPhone" Type="String" MaxLength="15" FixedLength="false" Unicode="true" />
+    <Property Name="EEmail" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="AuthyId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="UserToken" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="UserActiveStatus" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="isCloser" Type="Boolean" />
+    <Property Name="isGhostUser" Type="Boolean" />
+    <Property Name="CreatedBy" Type="Int32" />
+    <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+    <Property Name="EditedBy" Type="Int32" />
+    <Property Name="EditedDate" Type="DateTime" Precision="3" />
+    <Property Name="DeletedBy" Type="Int32" />
+    <Property Name="DeletedDate" Type="DateTime" Precision="3" />
+    <Property Name="isDeleted" Type="Boolean" />
+    <Property Name="isDeleteLock" Type="Boolean" />
+    <Property Name="isActive" Type="Boolean" />
+    <Property Name="isProfileCompleted" Type="Boolean" />
+    <Property Name="isApproved" Type="Boolean" />
+    <Property Name="ApprovedDate" Type="DateTime" Precision="3" />
+    <Property Name="ApprovedBy" Type="Int32" />
+    <Property Name="isRejected" Type="Boolean" />
+    <Property Name="RejectedDate" Type="DateTime" Precision="3" />
+    <Property Name="RejectedBy" Type="Int32" />
+  </EntityType>
+</Schema>
